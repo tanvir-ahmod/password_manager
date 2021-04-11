@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:password_manager/utils/app_router.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -43,6 +44,10 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
                 child: Text("Get Started"),
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, SetupMasterPasswordRoute, (r) => false);
+                },
                 style: ButtonStyle(
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
