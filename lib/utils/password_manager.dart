@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:encrypt/encrypt.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:password_manager/utils/constants.dart';
 
 class PasswordManager {
   static String generateRandomKey(int length) {
@@ -28,5 +30,13 @@ class PasswordManager {
     final encrypter = Encrypter(AES(encryptionKey));
     final decryptedString = encrypter.decrypt64(encryptedText, iv: iv);
     return decryptedString;
+  }
+
+  static Future<String> getDecryptedMasterKey() async{
+    final storage = new FlutterSecureStorage();
+    String randomKey = await storage.read(key: Constants.RANDOM_KEY);
+    String encryptedPassword = await storage.read(key: Constants.ENCRYPTED_MASTER_PASSWORD);
+
+    return decryptData(encryptedPassword, randomKey);
   }
 }

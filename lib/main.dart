@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
+import 'package:password_manager/data/repositories/add_password/add_password_repository_impl.dart';
+import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/utils/constants.dart';
 
 import 'utils/app_router.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter<PasswordModel>(PasswordModelAdapter());
+  await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Home',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddPasswordBloc>(
+          create: (context) => AddPasswordBloc(AddPasswordRepositoryImpl()),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Home',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: AppRouter.generateRoute,
+        initialRoute: AddPasswordRoute,
       ),
-      onGenerateRoute: AppRouter.generateRoute,
-      initialRoute: HomeRoute,
     );
   }
 }

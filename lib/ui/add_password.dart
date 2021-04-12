@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
+import 'package:password_manager/bloc/add_password/add_password_event.dart';
+import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/utils/password_manager.dart';
 
 class AddPassword extends StatefulWidget {
   @override
@@ -110,7 +115,11 @@ class _AddPasswordState extends State<AddPassword> {
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () async {
-                if (_form.currentState.validate()) {}
+                if (_form.currentState.validate()) {
+                  String encryptedPassword = PasswordManager.encryptData(_pass.text, await PasswordManager.getDecryptedMasterKey());
+                  BlocProvider.of<AddPasswordBloc>(context)
+                      .add(InsertPasswordEvent(PasswordModel(title: _title.text, password: encryptedPassword, userName: _userName.text)));
+                }
               },
             )
           ],
