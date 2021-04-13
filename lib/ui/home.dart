@@ -1,13 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:password_manager/bloc/home/home_bloc.dart';
+import 'package:password_manager/bloc/home/home_event.dart';
+import 'package:password_manager/bloc/home/home_state.dart';
 import 'package:password_manager/utils/app_router.dart';
 
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<HomeBloc>(context).add(GetRootRandomKeyEvent());
+
     var size = MediaQuery.of(context).size;
 
+    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+      if (state is GetRootRandomKeyState && !state.rootRandomKey.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, EnterMasterPasswordRoute, (r) => false);
+        });
+        return Container();
+      }
+      return _home(context, size);
+    });
+  }
+
+  Widget _home(BuildContext context, Size size) {
     return Scaffold(
         appBar: AppBar(title: Text("Password Manager")),
         body: Column(
