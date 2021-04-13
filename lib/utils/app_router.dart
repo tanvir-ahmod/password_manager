@@ -3,11 +3,13 @@ import 'package:password_manager/ui/add_password.dart';
 import 'package:password_manager/ui/enter_master_password.dart';
 import 'package:password_manager/ui/home.dart';
 import 'package:password_manager/ui/setup_master_password.dart';
+import 'package:password_manager/ui/show_passwords.dart';
 
 const String HomeRoute = "/";
 const String SetupMasterPasswordRoute = "/setupMasterPassword";
 const String EnterMasterPasswordRoute = "/enterMasterPassword";
 const String AddPasswordRoute = "/addMasterPassword";
+const String ShowPasswordsRoute = "/showPassword";
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -20,6 +22,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => EnterMasterPassword());
       case AddPasswordRoute:
         return MaterialPageRoute(builder: (_) => AddPassword());
+      case ShowPasswordsRoute:
+        return MaterialPageRoute(builder: (_) => ShowPasswords());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
