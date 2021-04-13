@@ -32,7 +32,7 @@ class PasswordManager {
     return decryptedString;
   }
 
-  static Future<String> getDecryptedMasterKey() async{
+  static Future<String> getDecryptedMasterPassword() async{
     final storage = new FlutterSecureStorage();
     String randomKey = await storage.read(key: Constants.RANDOM_KEY);
     String encryptedPassword = await storage.read(key: Constants.ENCRYPTED_MASTER_PASSWORD);

@@ -131,7 +131,7 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
   _saveMasterPassword(String password) async {
     final storage = new FlutterSecureStorage();
     String randomKey = PasswordManager.generateRandomKey(32);
-    String plainPass = _generateMinimum32CharMasterPassword(_pass.text);
+    String plainPass = _pass.text;
     String encryptedMasterPassword =
         PasswordManager.encryptData(plainPass, randomKey);
     await storage.write(key: Constants.RANDOM_KEY, value: randomKey);

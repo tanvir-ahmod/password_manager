@@ -1,5 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/enter_password/enter_password_bloc.dart';
+import 'package:password_manager/bloc/enter_password/enter_password_state.dart';
+
+import '../bloc/enter_password/enter_password_event.dart';
+import '../utils/app_router.dart';
 
 class EnterMasterPassword extends StatefulWidget {
   @override
@@ -7,12 +13,37 @@ class EnterMasterPassword extends StatefulWidget {
 }
 
 class _EnterMasterPasswordState extends State<EnterMasterPassword> {
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  final TextEditingController _pass = TextEditingController();
+
+  bool _isDialogShowing = false;
   bool _isPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
+    return BlocBuilder<EnterPasswordBloc, EnterPasswordState>(
+        builder: (context, state) {
+      if (state is CheckPasswordState) {
+        if (state.isMasterPasswordCorrect) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, ShowPasswordsRoute, (r) => false);
+          });
+
+          return Container();
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!_isDialogShowing) _showErrorDialog();
+          });
+        }
+      }
+      return _enterPasswordUI(context, size);
+    });
+  }
+
+  Widget _enterPasswordUI(BuildContext context, Size size) {
     return Scaffold(
       appBar: AppBar(title: Text("Enter master password")),
       body: SingleChildScrollView(
@@ -27,22 +58,30 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                obscureText: _isPasswordHidden,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                  suffix: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _isPasswordHidden = !_isPasswordHidden;
-                      });
-                    },
-                    child: Icon(
-                      _isPasswordHidden
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+              child: Form(
+                key: _form,
+                child: TextFormField(
+                  controller: _pass,
+                  textInputAction: TextInputAction.next,
+                  obscureText: _isPasswordHidden,
+                  validator: (val) {
+                    if (val.isEmpty) return 'Field can not be empty';
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                    suffix: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isPasswordHidden = !_isPasswordHidden;
+                        });
+                      },
+                      child: Icon(
+                        _isPasswordHidden
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
                     ),
                   ),
                 ),
@@ -62,11 +101,37 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.lightBlue)))),
-              onPressed: () {},
+              onPressed: () {
+                if (_form.currentState.validate()) {
+                  _isDialogShowing = false;
+                  BlocProvider.of<EnterPasswordBloc>(context)
+                      .add(CheckPasswordEvent(_pass.text));
+                }
+              },
             )
           ],
         ),
       ),
     );
+  }
+
+  _showErrorDialog() {
+    _isDialogShowing = true;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Invalid Password"),
+            actions: [
+              ElevatedButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }

@@ -15,7 +15,8 @@ class Home extends StatelessWidget {
     var size = MediaQuery.of(context).size;
 
     return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-      if (state is GetRootRandomKeyState && !state.rootRandomKey.isEmpty) {
+      if (state is GetRootRandomKeyState &&
+          (state.rootRandomKey != null && !state.rootRandomKey.isEmpty)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.pushNamedAndRemoveUntil(
               context, EnterMasterPasswordRoute, (r) => false);

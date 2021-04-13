@@ -116,7 +116,7 @@ class _AddPasswordState extends State<AddPassword> {
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () async {
                 if (_form.currentState.validate()) {
-                  String encryptedPassword = PasswordManager.encryptData(_pass.text, await PasswordManager.getDecryptedMasterKey());
+                  String encryptedPassword = PasswordManager.encryptData(_pass.text, await PasswordManager.getDecryptedMasterPassword());
                   BlocProvider.of<AddPasswordBloc>(context)
                       .add(InsertPasswordEvent(PasswordModel(title: _title.text, password: encryptedPassword, userName: _userName.text)));
                 }
