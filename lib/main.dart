@@ -4,11 +4,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
 import 'package:password_manager/bloc/enter_password/enter_password_bloc.dart';
-import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
-import 'package:password_manager/data/repositories/add_password/add_password_repository_impl.dart';
-import 'package:password_manager/data/repositories/enter_password/enter_password_repository_impl.dart';
-import 'package:password_manager/data/repositories/home/home_repository_impl.dart';
-import 'package:password_manager/data/repositories/show_password/show_password_repository_impl.dart';
+import 'package:password_manager/bloc/show_password/show_password_bloc.dart';import 'package:password_manager/data/repositories/home/home_repository_impl.dart';
+import 'package:password_manager/data/repositories/manage_password/password_manager_repository_impl.dart';
 import 'package:password_manager/models/password_model.dart';
 import 'package:password_manager/utils/constants.dart';
 
@@ -28,16 +25,16 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AddPasswordBloc>(
-          create: (context) => AddPasswordBloc(AddPasswordRepositoryImpl()),
+          create: (context) => AddPasswordBloc(PasswordManagerRepositoryImpl()),
         ),
         BlocProvider<ShowPasswordBloc>(
-          create: (context) => ShowPasswordBloc(ShowPasswordRepositoryImpl()),
+          create: (context) => ShowPasswordBloc(PasswordManagerRepositoryImpl()),
         ),
         BlocProvider<HomeBloc>(
           create: (context) => HomeBloc(HomeRepositoryImpl()),
         ),
         BlocProvider<EnterPasswordBloc>(
-          create: (context) => EnterPasswordBloc(EnterPasswordRepositoryImpl()),
+          create: (context) => EnterPasswordBloc(PasswordManagerRepositoryImpl()),
         ),
       ],
       child: MaterialApp(
