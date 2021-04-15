@@ -14,17 +14,16 @@ class Home extends StatelessWidget {
 
     var size = MediaQuery.of(context).size;
 
-    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-      if (state is GetRootRandomKeyState &&
-          (state.rootRandomKey != null && !state.rootRandomKey.isEmpty)) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+    return BlocListener<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state is GetRootRandomKeyState &&
+            (state.rootRandomKey != null && !state.rootRandomKey.isEmpty)) {
           Navigator.pushNamedAndRemoveUntil(
               context, EnterMasterPasswordRoute, (r) => false);
-        });
-        return Container();
-      }
-      return _home(context, size);
-    });
+        }
+      },
+      child: _home(context, size),
+    );
   }
 
   Widget _home(BuildContext context, Size size) {

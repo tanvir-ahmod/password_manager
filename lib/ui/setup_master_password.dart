@@ -21,21 +21,18 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
-    return BlocBuilder<SetupMasterPasswordBloc, SetupMasterPasswordState>(
-        builder: (context, state) {
-      if (state is MasterPasswordSetSate) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, ShowPasswordsRoute, (r) => false);
-        });
-      }
-      return _setupMasterPasswordUI(size);
-    });
+    return BlocListener<SetupMasterPasswordBloc, SetupMasterPasswordState>(
+        listener: (context, state) {
+          if (state is MasterPasswordSetSate) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, ShowPasswordsRoute, (r) => false);
+          }
+        },
+        child: _setupMasterPasswordUI());
   }
 
-  Widget _setupMasterPasswordUI(Size size) {
+  Widget _setupMasterPasswordUI() {
+    var size = MediaQuery.of(context).size;
     final focus = FocusNode();
     return Scaffold(
       appBar: AppBar(title: Text("Setup master password")),

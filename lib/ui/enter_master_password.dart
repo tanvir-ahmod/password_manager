@@ -16,31 +16,24 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
 
-  bool _isDialogShowing = false;
   bool _isPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return BlocBuilder<EnterPasswordBloc, EnterPasswordState>(
-        builder: (context, state) {
-      if (state is CheckPasswordState) {
-        if (state.isMasterPasswordCorrect) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushNamedAndRemoveUntil(
-                context, ShowPasswordsRoute, (r) => false);
-          });
-
-          return Container();
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!_isDialogShowing) _showErrorDialog();
-          });
-        }
-      }
-      return _enterPasswordUI(context, size);
-    });
+    return BlocListener<EnterPasswordBloc, EnterPasswordState>(
+        listener: (context, state) {
+          if (state is CheckPasswordState) {
+            if (state.isMasterPasswordCorrect) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, ShowPasswordsRoute, (r) => false);
+            } else {
+              _showErrorDialog();
+            }
+          }
+        },
+        child: _enterPasswordUI(context, size));
   }
 
   Widget _enterPasswordUI(BuildContext context, Size size) {
@@ -103,7 +96,6 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () {
                 if (_form.currentState.validate()) {
-                  _isDialogShowing = false;
                   BlocProvider.of<EnterPasswordBloc>(context)
                       .add(CheckPasswordEvent(_pass.text));
                 }
@@ -116,7 +108,6 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
   }
 
   _showErrorDialog() {
-    _isDialogShowing = true;
     showDialog(
         context: context,
         builder: (BuildContext context) {
