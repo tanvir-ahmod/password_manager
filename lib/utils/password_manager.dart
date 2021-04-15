@@ -32,22 +32,37 @@ class PasswordManager {
     return decryptedString;
   }
 
-  static Future<String> getDecryptedMasterPassword() async{
+  static Future<String> getDecryptedMasterPassword() async {
     final storage = new FlutterSecureStorage();
     String randomKey = await storage.read(key: Constants.RANDOM_KEY);
-    String encryptedPassword = await storage.read(key: Constants.ENCRYPTED_MASTER_PASSWORD);
+    String encryptedPassword =
+        await storage.read(key: Constants.ENCRYPTED_MASTER_PASSWORD);
 
     return decryptData(encryptedPassword, randomKey);
   }
 
-  static saveMasterPassword(String password) async{
+  static saveMasterPassword(String password) async {
     final storage = new FlutterSecureStorage();
     String randomKey = PasswordManager.generateRandomKey(32);
     String encryptedMasterPassword =
-    PasswordManager.encryptData(password, randomKey);
+        PasswordManager.encryptData(password, randomKey);
     await storage.write(key: Constants.RANDOM_KEY, value: randomKey);
     await storage.write(
         key: Constants.ENCRYPTED_MASTER_PASSWORD,
         value: encryptedMasterPassword);
+  }
+
+  static Future<String> getMinimum32CharMasterPassword() async {
+    String masterPassword = await getDecryptedMasterPassword();
+    int passwordLength = masterPassword.length;
+
+    // minimum key length must be 32
+    if (passwordLength < 32) {
+      int requiredLength = 32 - passwordLength;
+      for (var i = 0; i < requiredLength; i++) {
+        masterPassword += ".";
+      }
+    }
+    return masterPassword;
   }
 }

@@ -5,8 +5,8 @@ import 'package:password_manager/utils/constants.dart';
 import 'package:password_manager/utils/password_manager.dart';
 
 class PasswordManagerDaoImpl extends PasswordManagerDao {
-
-  static final PasswordManagerDaoImpl _passwordManagerDaoImpl = PasswordManagerDaoImpl._internal();
+  static final PasswordManagerDaoImpl _passwordManagerDaoImpl =
+      PasswordManagerDaoImpl._internal();
 
   factory PasswordManagerDaoImpl() {
     return _passwordManagerDaoImpl;
@@ -15,31 +15,32 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
   PasswordManagerDaoImpl._internal();
 
   @override
-  insertPassword(PasswordModel passwordModel) async {
+  Future<void> insertPassword(PasswordModel passwordModel) async {
     Box<PasswordModel> passwordBox =
-    Hive.box<PasswordModel>(Constants.PASSWORD_DB);
+        await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
+    String encryptedPassword = PasswordManager.encryptData(
+        passwordModel.password,
+        await PasswordManager.getMinimum32CharMasterPassword());
+    passwordModel.password = encryptedPassword;
     passwordBox.add(passwordModel);
   }
 
   @override
   Future<List<PasswordModel>> getPasswords() async {
-    final passwords = Hive.box<PasswordModel>(Constants.PASSWORD_DB);
-    List<PasswordModel> result = [];
-    for (var i = 0; i < passwords.length; i++) {
-      result.add(passwords.getAt(i));
-    }
-    return result;
+    final passwordBox =
+        await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
+    return passwordBox.values.toList();
   }
 
   @override
   Future<bool> checkPasswordIfCorrect(String plainPassword) async {
     String decryptedMasterPassword =
-    await PasswordManager.getDecryptedMasterPassword();
+        await PasswordManager.getDecryptedMasterPassword();
     return decryptedMasterPassword == plainPassword;
   }
 
   @override
-  saveMasterPassword(String password) async{
+  Future<void> saveMasterPassword(String password) async {
     await PasswordManager.saveMasterPassword(password);
   }
 }

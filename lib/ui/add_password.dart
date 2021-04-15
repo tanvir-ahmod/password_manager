@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
 import 'package:password_manager/bloc/add_password/add_password_event.dart';
+import 'package:password_manager/bloc/add_password/add_password_state.dart';
+import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
+import 'package:password_manager/bloc/show_password/show_password_event.dart';
 import 'package:password_manager/models/password_model.dart';
-import 'package:password_manager/utils/password_manager.dart';
 
 class AddPassword extends StatefulWidget {
   @override
@@ -21,9 +24,19 @@ class _AddPasswordState extends State<AddPassword> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<AddPasswordBloc, AddPasswordState>(
+        listener: (context, state) {
+          if (state is PasswordSavedState) {
+            BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
+            Navigator.pop(context);
+          }
+        },
+        child: _addPasswordUI());
+  }
+
+  Widget _addPasswordUI() {
     var size = MediaQuery.of(context).size;
     final node = FocusScope.of(context);
-
     return Scaffold(
       appBar: AppBar(title: Text("Add password")),
       body: SingleChildScrollView(
@@ -104,7 +117,10 @@ class _AddPasswordState extends State<AddPassword> {
               height: 20,
             ),
             ElevatedButton(
-              child: Text("Save", style: TextStyle(fontSize: 16),),
+              child: Text(
+                "Save",
+                style: TextStyle(fontSize: 16),
+              ),
               style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
@@ -116,9 +132,11 @@ class _AddPasswordState extends State<AddPassword> {
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () async {
                 if (_form.currentState.validate()) {
-                  String encryptedPassword = PasswordManager.encryptData(_pass.text, await PasswordManager.getDecryptedMasterPassword());
-                  BlocProvider.of<AddPasswordBloc>(context)
-                      .add(InsertPasswordEvent(PasswordModel(title: _title.text, password: encryptedPassword, userName: _userName.text)));
+                  BlocProvider.of<AddPasswordBloc>(context).add(
+                      InsertPasswordEvent(PasswordModel(
+                          title: _title.text,
+                          password: _pass.text,
+                          userName: _userName.text)));
                 }
               },
             )

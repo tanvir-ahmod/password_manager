@@ -17,7 +17,6 @@ import 'utils/app_router.dart';
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<PasswordModel>(PasswordModelAdapter());
-  await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
   runApp(MyApp());
 }
 

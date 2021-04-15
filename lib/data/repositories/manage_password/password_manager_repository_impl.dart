@@ -15,9 +15,8 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   final _passwordManagerDao = PasswordManagerDaoImpl();
 
   @override
-  insertPassword(PasswordModel passwordModel) {
-    _passwordManagerDao.insertPassword(passwordModel);
-  }
+  Future<void> insertPassword(PasswordModel passwordModel) =>
+      _passwordManagerDao.insertPassword(passwordModel);
 
   @override
   Future getPasswords() => _passwordManagerDao.getPasswords();
@@ -27,5 +26,6 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
       _passwordManagerDao.checkPasswordIfCorrect(plainPassword);
 
   @override
-  saveMasterPassword(String password) => _passwordManagerDao.saveMasterPassword(password);
+  Future<void> saveMasterPassword(String password) =>
+      _passwordManagerDao.saveMasterPassword(password);
 }
