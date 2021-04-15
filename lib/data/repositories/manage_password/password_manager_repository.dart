@@ -6,4 +6,6 @@ abstract class PasswordManagerRepository {
    Future getPasswords();
 
    Future checkPasswordIfCorrect(String plainPassword);
+
+   saveMasterPassword(String password);
 }

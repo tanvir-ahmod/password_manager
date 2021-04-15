@@ -37,4 +37,9 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
     await PasswordManager.getDecryptedMasterPassword();
     return decryptedMasterPassword == plainPassword;
   }
+
+  @override
+  saveMasterPassword(String password) async{
+    await PasswordManager.saveMasterPassword(password);
+  }
 }

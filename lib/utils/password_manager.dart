@@ -39,4 +39,15 @@ class PasswordManager {
 
     return decryptData(encryptedPassword, randomKey);
   }
+
+  static saveMasterPassword(String password) async{
+    final storage = new FlutterSecureStorage();
+    String randomKey = PasswordManager.generateRandomKey(32);
+    String encryptedMasterPassword =
+    PasswordManager.encryptData(password, randomKey);
+    await storage.write(key: Constants.RANDOM_KEY, value: randomKey);
+    await storage.write(
+        key: Constants.ENCRYPTED_MASTER_PASSWORD,
+        value: encryptedMasterPassword);
+  }
 }

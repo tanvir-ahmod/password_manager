@@ -4,4 +4,5 @@ abstract class PasswordManagerDao {
   insertPassword(PasswordModel passwordModel);
   Future<List<PasswordModel>> getPasswords();
   Future<bool> checkPasswordIfCorrect(String plainPassword);
+  saveMasterPassword(String password);
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:password_manager/utils/constants.dart';
-import 'package:password_manager/utils/password_manager.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/setup_master_password/setup_master_password_bloc.dart';
+import 'package:password_manager/bloc/setup_master_password/setup_master_password_event.dart';
+import 'package:password_manager/bloc/setup_master_password/setup_master_password_state.dart';
+import 'package:password_manager/utils/app_router.dart';
 
 class SetupMasterPassword extends StatefulWidget {
   @override
@@ -20,8 +22,21 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final focus = FocusNode();
 
+    return BlocBuilder<SetupMasterPasswordBloc, SetupMasterPasswordState>(
+        builder: (context, state) {
+      if (state is MasterPasswordSetSate) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, ShowPasswordsRoute, (r) => false);
+        });
+      }
+      return _setupMasterPasswordUI(size);
+    });
+  }
+
+  Widget _setupMasterPasswordUI(Size size) {
+    final focus = FocusNode();
     return Scaffold(
       appBar: AppBar(title: Text("Setup master password")),
       body: SingleChildScrollView(
@@ -118,7 +133,8 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () async {
                 if (_form.currentState.validate()) {
-                  await _saveMasterPassword(_pass.text);
+                  BlocProvider.of<SetupMasterPasswordBloc>(context)
+                      .add(SaveMasterPasswordEvent(_pass.text));
                 }
               },
             )
@@ -126,30 +142,5 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
         ),
       ),
     );
-  }
-
-  _saveMasterPassword(String password) async {
-    final storage = new FlutterSecureStorage();
-    String randomKey = PasswordManager.generateRandomKey(32);
-    String plainPass = _pass.text;
-    String encryptedMasterPassword =
-        PasswordManager.encryptData(plainPass, randomKey);
-    await storage.write(key: Constants.RANDOM_KEY, value: randomKey);
-    await storage.write(
-        key: Constants.ENCRYPTED_MASTER_PASSWORD,
-        value: encryptedMasterPassword);
-  }
-
-  String _generateMinimum32CharMasterPassword(String masterPassword) {
-    int passwordLength = masterPassword.length;
-
-    // minimum key length must be 32
-    if (passwordLength < 32) {
-      int requiredLength = 32 - passwordLength;
-      for (var i = 0; i < requiredLength; i++) {
-        masterPassword += ".";
-      }
-    }
-    return masterPassword;
   }
 }

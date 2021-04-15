@@ -25,4 +25,7 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   @override
   Future checkPasswordIfCorrect(plainPassword) =>
       _passwordManagerDao.checkPasswordIfCorrect(plainPassword);
+
+  @override
+  saveMasterPassword(String password) => _passwordManagerDao.saveMasterPassword(password);
 }
