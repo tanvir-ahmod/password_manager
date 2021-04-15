@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:password_manager/models/password_model.dart';
 import 'package:password_manager/ui/add_password.dart';
 import 'package:password_manager/ui/enter_master_password.dart';
 import 'package:password_manager/ui/home.dart';
 import 'package:password_manager/ui/setup_master_password.dart';
+import 'package:password_manager/ui/show_details.dart';
 import 'package:password_manager/ui/show_passwords.dart';
 
 const String HomeRoute = "/";
@@ -10,6 +12,7 @@ const String SetupMasterPasswordRoute = "/setupMasterPassword";
 const String EnterMasterPasswordRoute = "/enterMasterPassword";
 const String AddPasswordRoute = "/addMasterPassword";
 const String ShowPasswordsRoute = "/showPassword";
+const String ShowDetailsRoute = "/showDetails";
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -24,6 +27,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AddPassword());
       case ShowPasswordsRoute:
         return MaterialPageRoute(builder: (_) => ShowPasswords());
+      case ShowDetailsRoute:
+        var passwordModel = settings.arguments as PasswordModel;
+        return MaterialPageRoute(
+            builder: (_) => ShowDetails(passwordModel: passwordModel));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

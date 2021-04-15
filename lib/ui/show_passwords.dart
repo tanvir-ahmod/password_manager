@@ -34,7 +34,13 @@ class ShowPasswords extends StatelessWidget {
                 backgroundImage: AssetImage('assets/images/lock_icon_2.png'),
               ),
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  ShowDetailsRoute,
+                    arguments: passwords[index]
+                );
+              },
             );
           },
           separatorBuilder: (context, index) {
