@@ -5,21 +5,33 @@ import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/bloc/show_password/show_password_event.dart';
 import 'package:password_manager/bloc/show_password/show_password_state.dart';
 import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/utils/app_router.dart';
 
 class ShowPasswords extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
     return Scaffold(
-        appBar: AppBar(title: Text("Show passwords")),
-        body: BlocBuilder<ShowPasswordBloc, ShowPasswordState>(
-            builder: (context, state) {
-          if (state is GetPasswordState) {
-            return _showPasswords(state.passwords);
-          } else {
-            return Container();
-          }
-        }));
+      appBar: AppBar(title: Text("Show passwords")),
+      body: BlocBuilder<ShowPasswordBloc, ShowPasswordState>(
+          builder: (context, state) {
+        if (state is GetPasswordState) {
+          return _showPasswords(state.passwords);
+        } else {
+          return Container();
+        }
+      }),
+      floatingActionButton: FloatingActionButton(
+        // isExtended: true,
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AddPasswordRoute,
+          );
+        },
+      ),
+    );
   }
 
   Widget _showPasswords(List<PasswordModel> passwords) {
