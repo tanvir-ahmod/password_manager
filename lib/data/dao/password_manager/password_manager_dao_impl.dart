@@ -43,4 +43,10 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
   Future<void> saveMasterPassword(String password) async {
     await PasswordManager.saveMasterPassword(password);
   }
+
+  @override
+  Future<String> decryptPassword(String password) async {
+    return PasswordManager.decryptData(
+        password, await PasswordManager.getMinimum32CharMasterPassword());
+  }
 }

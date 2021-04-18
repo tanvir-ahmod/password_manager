@@ -8,4 +8,7 @@ abstract class PasswordManagerRepository {
    Future checkPasswordIfCorrect(String plainPassword);
 
    Future<void> saveMasterPassword(String password);
+
+
+   Future<String> decryptPassword(String password);
 }

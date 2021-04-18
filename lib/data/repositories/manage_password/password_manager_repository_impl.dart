@@ -28,4 +28,7 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   @override
   Future<void> saveMasterPassword(String password) =>
       _passwordManagerDao.saveMasterPassword(password);
+
+  @override
+  Future<String> decryptPassword(String password) => _passwordManagerDao.decryptPassword(password);
 }

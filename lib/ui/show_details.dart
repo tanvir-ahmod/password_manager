@@ -6,6 +6,7 @@ import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
 import 'package:password_manager/bloc/add_password/add_password_event.dart';
 import 'package:password_manager/bloc/add_password/add_password_state.dart';
 import 'package:password_manager/bloc/show_details/show_details_bloc.dart';
+import 'package:password_manager/bloc/show_details/show_details_event.dart';
 import 'package:password_manager/bloc/show_details/show_details_state.dart';
 import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/bloc/show_password/show_password_event.dart';
@@ -27,6 +28,7 @@ class _ShowDetailsState extends State<ShowDetails> {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _userName = TextEditingController();
   final TextEditingController _pass = TextEditingController();
+  String _password = "";
 
   bool _isEditable = false;
   bool _isPasswordHidden = true;
@@ -37,14 +39,20 @@ class _ShowDetailsState extends State<ShowDetails> {
   Widget build(BuildContext context) {
     return BlocListener<ShowDetailsBloc, ShowDetailsState>(
         listener: (context, state) {
-
-        }, child: _showDetailsUI());
+          if (state is DecryptPasswordState) {
+            _password = state.password;
+          } else {
+            _password = _passwordModel.password;
+          }
+        },
+        child: _showDetailsUI());
   }
 
   Widget _showDetailsUI() {
     _title.text = _passwordModel.title;
     _userName.text = _passwordModel.userName;
-    _pass.text = _passwordModel.password;
+    _pass.text = _password.isEmpty ? _passwordModel.password : _password;
+
     var size = MediaQuery.of(context).size;
     final node = FocusScope.of(context);
     return Scaffold(
@@ -107,6 +115,12 @@ class _ShowDetailsState extends State<ShowDetails> {
                         border: OutlineInputBorder(),
                         suffix: InkWell(
                           onTap: () {
+                            if (_isPasswordHidden) {
+                              BlocProvider.of<ShowDetailsBloc>(context)
+                                  .add(DecryptPasswordEvent(_pass.text));
+                            } else {
+                              _password = _passwordModel.password;
+                            }
                             setState(() {
                               _isPasswordHidden = !_isPasswordHidden;
                             });

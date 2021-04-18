@@ -9,5 +9,11 @@ class ShowDetailsBloc extends Bloc<ShowDetailsEvent, ShowDetailsState> {
   ShowDetailsBloc(this._passwordManagerRepository) : super(null);
 
   @override
-  Stream<ShowDetailsState> mapEventToState(ShowDetailsEvent event) async* {}
+  Stream<ShowDetailsState> mapEventToState(ShowDetailsEvent event) async* {
+    if (event is DecryptPasswordEvent) {
+      String decryptedPassword =
+          await _passwordManagerRepository.decryptPassword(event.password);
+      yield DecryptPasswordState(decryptedPassword);
+    }
+  }
 }
