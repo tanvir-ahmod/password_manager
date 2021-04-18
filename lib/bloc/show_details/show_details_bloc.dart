@@ -15,5 +15,10 @@ class ShowDetailsBloc extends Bloc<ShowDetailsEvent, ShowDetailsState> {
           await _passwordManagerRepository.decryptPassword(event.password);
       yield DecryptPasswordState(decryptedPassword);
     }
+
+    if (event is DeleteDetailsEvent) {
+      await _passwordManagerRepository.deletePassword(event.index);
+      yield DeleteDetailsState();
+    }
   }
 }

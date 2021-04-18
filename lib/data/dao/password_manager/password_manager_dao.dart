@@ -6,4 +6,5 @@ abstract class PasswordManagerDao {
   Future<bool> checkPasswordIfCorrect(String plainPassword);
   Future<void> saveMasterPassword(String password);
   Future<String> decryptPassword(String password);
+  Future<void> deletePassword(int index);
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/models/password_model_with_index.dart';
 import 'package:password_manager/ui/add_password.dart';
 import 'package:password_manager/ui/enter_master_password.dart';
 import 'package:password_manager/ui/home.dart';
@@ -28,9 +29,9 @@ class AppRouter {
       case ShowPasswordsRoute:
         return MaterialPageRoute(builder: (_) => ShowPasswords());
       case ShowDetailsRoute:
-        var passwordModel = settings.arguments as PasswordModel;
+        var passwordModelWithIndex = settings.arguments as PasswordModelWithIndex;
         return MaterialPageRoute(
-            builder: (_) => ShowDetails(passwordModel: passwordModel));
+            builder: (_) => ShowDetails(passwordModelWithIndex: passwordModelWithIndex));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

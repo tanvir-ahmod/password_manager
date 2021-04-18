@@ -9,6 +9,7 @@ abstract class PasswordManagerRepository {
 
    Future<void> saveMasterPassword(String password);
 
-
    Future<String> decryptPassword(String password);
+
+   Future<void> deletePassword(int index);
 }

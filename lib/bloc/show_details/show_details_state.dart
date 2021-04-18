@@ -5,3 +5,5 @@ class DecryptPasswordState extends ShowDetailsState {
 
   DecryptPasswordState(this.password);
 }
+
+class DeleteDetailsState extends ShowDetailsState {}

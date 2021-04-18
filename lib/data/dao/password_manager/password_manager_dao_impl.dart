@@ -49,4 +49,11 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
     return PasswordManager.decryptData(
         password, await PasswordManager.getMinimum32CharMasterPassword());
   }
+
+  @override
+  Future<void> deletePassword(int index) async {
+    final passwordBox =
+        await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
+    passwordBox.deleteAt(index);
+  }
 }

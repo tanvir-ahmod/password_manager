@@ -5,3 +5,9 @@ class DecryptPasswordEvent extends ShowDetailsEvent {
 
   DecryptPasswordEvent(this.password);
 }
+
+class DeleteDetailsEvent extends ShowDetailsEvent {
+  final index;
+
+  DeleteDetailsEvent(this.index);
+}

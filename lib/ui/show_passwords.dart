@@ -5,6 +5,7 @@ import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/bloc/show_password/show_password_event.dart';
 import 'package:password_manager/bloc/show_password/show_password_state.dart';
 import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/models/password_model_with_index.dart';
 import 'package:password_manager/utils/app_router.dart';
 
 class ShowPasswords extends StatelessWidget {
@@ -35,11 +36,8 @@ class ShowPasswords extends StatelessWidget {
               ),
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  ShowDetailsRoute,
-                    arguments: passwords[index]
-                );
+                Navigator.pushNamed(context, ShowDetailsRoute,
+                    arguments: PasswordModelWithIndex(index, passwords[index]));
               },
             );
           },
