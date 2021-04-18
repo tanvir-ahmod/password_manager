@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:password_manager/data/dao/password_manager/password_manager_dao.dart';
 import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/models/password_model_with_index.dart';
 import 'package:password_manager/utils/constants.dart';
 import 'package:password_manager/utils/password_manager.dart';
 
@@ -55,5 +56,18 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
     final passwordBox =
         await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
     passwordBox.deleteAt(index);
+  }
+
+  @override
+  Future<void> updatePassword(
+      PasswordModelWithIndex passwordModelWithIndex) async {
+    final passwordBox =
+        await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
+    final passwordModel = passwordModelWithIndex.passwordModel;
+    String encryptedPassword = PasswordManager.encryptData(
+        passwordModel.password,
+        await PasswordManager.getMinimum32CharMasterPassword());
+    passwordModel.password = encryptedPassword;
+    passwordBox.putAt(passwordModelWithIndex.index, passwordModel);
   }
 }

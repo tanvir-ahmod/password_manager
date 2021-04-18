@@ -34,7 +34,6 @@ class _ShowDetailsState extends State<ShowDetails> {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _userName = TextEditingController();
   final TextEditingController _pass = TextEditingController();
-  String _password = "";
 
   bool _isEditable = false;
   bool _isPasswordHidden = true;
@@ -42,26 +41,35 @@ class _ShowDetailsState extends State<ShowDetails> {
   _ShowDetailsState(this._passwordModel, this.index);
 
   @override
+  void initState() {
+    super.initState();
+    _title.text = _passwordModel.title;
+    _userName.text = _passwordModel.userName;
+    _pass.text = _passwordModel.password;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<ShowDetailsBloc, ShowDetailsState>(
         listener: (context, state) {
           if (state is DecryptPasswordState) {
-            _password = state.password;
-          } else if (state is DeleteDetailsState) {
-            BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
-            _showDeleteSuccessDialog();
+            _pass.text = state.password;
           } else {
-            _password = _passwordModel.password;
+            _pass.text = _passwordModel.password;
+          }
+          if (state is DeleteDetailsState) {
+            BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
+            _showSuccessDialog("Data deleted successfully");
+          }
+          if (state is UpdateDetailsState) {
+            BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
+            _showSuccessDialog("Data updated successfully");
           }
         },
         child: _showDetailsUI());
   }
 
   Widget _showDetailsUI() {
-    _title.text = _passwordModel.title;
-    _userName.text = _passwordModel.userName;
-    _pass.text = _password.isEmpty ? _passwordModel.password : _password;
-
     var size = MediaQuery.of(context).size;
     final node = FocusScope.of(context);
     return Scaffold(
@@ -76,6 +84,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                     onTap: () {
                       setState(() {
                         _isEditable = false;
+                        _pass.text = _passwordModel.password;
                       });
                     },
                     child: Icon(
@@ -91,6 +100,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                       onTap: () {
                         setState(() {
                           _isEditable = true;
+                          _pass.text = "";
                         });
                       },
                       child: Icon(
@@ -127,6 +137,7 @@ class _ShowDetailsState extends State<ShowDetails> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _form,
                 child: Column(
                   children: [
@@ -175,12 +186,15 @@ class _ShowDetailsState extends State<ShowDetails> {
                         border: OutlineInputBorder(),
                         suffix: InkWell(
                           onTap: () {
-                            if (_isPasswordHidden) {
-                              BlocProvider.of<ShowDetailsBloc>(context)
-                                  .add(DecryptPasswordEvent(_pass.text));
-                            } else {
-                              _password = _passwordModel.password;
+                            if (!_isEditable) {
+                              if (_isPasswordHidden) {
+                                BlocProvider.of<ShowDetailsBloc>(context)
+                                    .add(DecryptPasswordEvent(_pass.text));
+                              } else {
+                                _pass.text = _passwordModel.password;
+                              }
                             }
+
                             setState(() {
                               _isPasswordHidden = !_isPasswordHidden;
                             });
@@ -218,11 +232,13 @@ class _ShowDetailsState extends State<ShowDetails> {
                               side: BorderSide(color: Colors.lightBlue)))),
                   onPressed: () async {
                     if (_form.currentState.validate()) {
-                      BlocProvider.of<AddPasswordBloc>(context).add(
-                          InsertPasswordEvent(PasswordModel(
-                              title: _title.text,
-                              password: _pass.text,
-                              userName: _userName.text)));
+                      BlocProvider.of<ShowDetailsBloc>(context).add(
+                          UpdateDetailsEvent(PasswordModelWithIndex(
+                              index,
+                              PasswordModel(
+                                  title: _title.text,
+                                  password: _pass.text,
+                                  userName: _userName.text))));
                     }
                   },
                 );
@@ -265,13 +281,13 @@ class _ShowDetailsState extends State<ShowDetails> {
         });
   }
 
-  _showDeleteSuccessDialog() {
+  _showSuccessDialog(String message) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Success"),
-            content: Text("Data deleted successfully"),
+            content: Text(message),
             actions: [
               ElevatedButton(
                 child: Text("Ok"),

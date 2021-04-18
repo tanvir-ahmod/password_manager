@@ -7,3 +7,5 @@ class DecryptPasswordState extends ShowDetailsState {
 }
 
 class DeleteDetailsState extends ShowDetailsState {}
+
+class UpdateDetailsState extends ShowDetailsState {}

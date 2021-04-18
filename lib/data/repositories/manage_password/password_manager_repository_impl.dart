@@ -1,6 +1,7 @@
 import 'package:password_manager/data/dao/password_manager/password_manager_dao_impl.dart';
 import 'package:password_manager/data/repositories/manage_password/password_manager_repository.dart';
 import 'package:password_manager/models/password_model.dart';
+import 'package:password_manager/models/password_model_with_index.dart';
 
 class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   static final PasswordManagerRepositoryImpl _passwordManagerRepositoryImpl =
@@ -36,4 +37,8 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   @override
   Future<void> deletePassword(int index) =>
       _passwordManagerDao.deletePassword(index);
+
+  @override
+  Future<void> updatePassword(PasswordModelWithIndex passwordModelWithIndex) =>
+      _passwordManagerDao.updatePassword(passwordModelWithIndex);
 }

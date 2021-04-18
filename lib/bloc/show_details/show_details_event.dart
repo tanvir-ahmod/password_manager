@@ -11,3 +11,9 @@ class DeleteDetailsEvent extends ShowDetailsEvent {
 
   DeleteDetailsEvent(this.index);
 }
+
+class UpdateDetailsEvent extends ShowDetailsEvent {
+  final passwordModelWithIndex;
+
+  UpdateDetailsEvent(this.passwordModelWithIndex);
+}
