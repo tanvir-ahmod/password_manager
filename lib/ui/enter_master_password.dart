@@ -84,7 +84,10 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
               height: 20,
             ),
             ElevatedButton(
-              child: Text("Proceed"),
+              child: Text(
+                "Proceed",
+                style: TextStyle(fontSize: 16),
+              ),
               style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),

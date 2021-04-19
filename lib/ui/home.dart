@@ -62,7 +62,10 @@ class Home extends StatelessWidget {
               height: 120,
             ),
             ElevatedButton(
-                child: Text("Get Started"),
+                child: Text(
+                  "Get Started",
+                  style: TextStyle(fontSize: 18),
+                ),
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, SetupMasterPasswordRoute, (r) => false);

@@ -118,7 +118,10 @@ class _SetupMasterPasswordState extends State<SetupMasterPassword> {
               height: 20,
             ),
             ElevatedButton(
-              child: Text("Set Password"),
+              child: Text(
+                "Set Password",
+                style: TextStyle(fontSize: 16),
+              ),
               style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
