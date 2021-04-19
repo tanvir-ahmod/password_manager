@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
-import 'package:password_manager/bloc/add_password/add_password_event.dart';
-import 'package:password_manager/bloc/add_password/add_password_state.dart';
 import 'package:password_manager/bloc/show_details/show_details_bloc.dart';
 import 'package:password_manager/bloc/show_details/show_details_event.dart';
 import 'package:password_manager/bloc/show_details/show_details_state.dart';
@@ -12,7 +9,6 @@ import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/bloc/show_password/show_password_event.dart';
 import 'package:password_manager/models/password_model.dart';
 import 'package:password_manager/models/password_model_with_index.dart';
-import 'package:password_manager/utils/app_router.dart';
 
 class ShowDetails extends StatefulWidget {
   final index;
@@ -38,6 +34,8 @@ class _ShowDetailsState extends State<ShowDetails> {
   bool _isEditable = false;
   bool _isPasswordHidden = true;
 
+  String _decryptedPassword = "";
+
   _ShowDetailsState(this._passwordModel, this.index);
 
   @override
@@ -46,6 +44,9 @@ class _ShowDetailsState extends State<ShowDetails> {
     _title.text = _passwordModel.title;
     _userName.text = _passwordModel.userName;
     _pass.text = _passwordModel.password;
+
+    BlocProvider.of<ShowDetailsBloc>(context)
+        .add(DecryptPasswordEvent(_pass.text));
   }
 
   @override
@@ -53,9 +54,7 @@ class _ShowDetailsState extends State<ShowDetails> {
     return BlocListener<ShowDetailsBloc, ShowDetailsState>(
         listener: (context, state) {
           if (state is DecryptPasswordState) {
-            _pass.text = state.password;
-          } else {
-            _pass.text = _passwordModel.password;
+            _decryptedPassword = state.password;
           }
           if (state is DeleteDetailsState) {
             BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
@@ -188,8 +187,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                           onTap: () {
                             if (!_isEditable) {
                               if (_isPasswordHidden) {
-                                BlocProvider.of<ShowDetailsBloc>(context)
-                                    .add(DecryptPasswordEvent(_pass.text));
+                                _pass.text = _decryptedPassword;
                               } else {
                                 _pass.text = _passwordModel.password;
                               }
