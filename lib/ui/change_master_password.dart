@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:password_manager/bloc/change_master_password/change_master_password_bloc.dart';
+import 'package:password_manager/bloc/change_master_password/change_master_password_event.dart';
+import 'package:password_manager/bloc/change_master_password/change_master_password_state.dart';
+import 'package:password_manager/utils/app_router.dart';
 
 class ChangeMasterPassword extends StatefulWidget {
   @override
@@ -18,7 +23,14 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return _changeMasterPasswordUI();
+    return BlocListener<ChangeMasterPasswordBloc, ChangeMasterPasswordState>(
+      listener: (context, state) {
+        if (state is UpdateMasterPasswordState) {
+          _showDialog(state.isSuccess);
+        }
+      },
+      child: _changeMasterPasswordUI(),
+    );
   }
 
   Widget _changeMasterPasswordUI() {
@@ -40,6 +52,7 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: Form(
                 key: _form,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   children: [
                     TextFormField(
@@ -106,6 +119,8 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                       obscureText: _isConfirmPasswordHidden,
                       validator: (val) {
                         if (val.isEmpty) return 'Field can not be empty';
+                        if (val != _newPassword.text)
+                          return 'Password does not match';
                         return null;
                       },
                       onEditingComplete: () => node.unfocus(),
@@ -149,12 +164,42 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.lightBlue)))),
               onPressed: () async {
-                if (_form.currentState.validate()) {}
+                if (_form.currentState.validate()) {
+                  BlocProvider.of<ChangeMasterPasswordBloc>(context).add(
+                      UpdateMasterPasswordEvent(
+                          _oldPassword.text, _newPassword.text));
+                }
               },
             )
           ],
         ),
       ),
     );
+  }
+
+  _showDialog(bool isSuccess) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(isSuccess ? "Success" : "Error"),
+            content: Text(isSuccess
+                ? "Password Updated Successfully"
+                : "Invalid Old Password"),
+            actions: [
+              ElevatedButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  if (isSuccess) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, EnterMasterPasswordRoute, (r) => false);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              )
+            ],
+          );
+        });
   }
 }

@@ -41,4 +41,8 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
   @override
   Future<void> updatePassword(PasswordModelWithIndex passwordModelWithIndex) =>
       _passwordManagerDao.updatePassword(passwordModelWithIndex);
+
+  @override
+  Future<bool> updateMasterPassword(String oldPassword,String password) =>
+      _passwordManagerDao.updateMasterPassword(oldPassword, password);
 }

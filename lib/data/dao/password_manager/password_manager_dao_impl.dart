@@ -70,4 +70,13 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
     passwordModel.password = encryptedPassword;
     passwordBox.putAt(passwordModelWithIndex.index, passwordModel);
   }
+
+  @override
+  Future<bool> updateMasterPassword(String oldPassword, String password) async {
+    if (await checkPasswordIfCorrect(oldPassword)) {
+      saveMasterPassword(password);
+      return await Future.value(true);
+    }
+    return await Future.value(false);
+  }
 }

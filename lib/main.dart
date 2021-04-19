@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:password_manager/bloc/add_password/add_password_bloc.dart';
+import 'package:password_manager/bloc/change_master_password/change_master_password_bloc.dart';
 import 'package:password_manager/bloc/enter_password/enter_password_bloc.dart';
 import 'package:password_manager/bloc/setup_master_password/setup_master_password_bloc.dart';
 import 'package:password_manager/bloc/show_details/show_details_bloc.dart';
@@ -10,8 +11,6 @@ import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/data/repositories/home/home_repository_impl.dart';
 import 'package:password_manager/data/repositories/manage_password/password_manager_repository_impl.dart';
 import 'package:password_manager/models/password_model.dart';
-import 'package:password_manager/utils/constants.dart';
-
 import 'bloc/home/home_bloc.dart';
 import 'utils/app_router.dart';
 
@@ -46,6 +45,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ShowDetailsBloc>(
           create: (context) => ShowDetailsBloc(PasswordManagerRepositoryImpl()),
+        ),
+        BlocProvider<ChangeMasterPasswordBloc>(
+          create: (context) =>
+              ChangeMasterPasswordBloc(PasswordManagerRepositoryImpl()),
         ),
       ],
       child: MaterialApp(

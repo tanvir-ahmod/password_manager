@@ -8,6 +8,9 @@ import 'package:password_manager/models/password_model.dart';
 import 'package:password_manager/models/password_model_with_index.dart';
 import 'package:password_manager/utils/app_router.dart';
 
+const String CHANGE_MASTER_PASSWORD = "Change Master Password";
+const String LOGOUT = "Logout";
+
 class ShowPasswords extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,24 @@ class ShowPasswords extends StatelessWidget {
 
   Widget _showPasswords(BuildContext context, List<PasswordModel> passwords) {
     return Scaffold(
-      appBar: AppBar(title: Text("Show passwords")),
+      appBar: AppBar(
+        title: Text("Show passwords"),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              _handleMenuClick(context, value);
+            },
+            itemBuilder: (BuildContext context) {
+              return {CHANGE_MASTER_PASSWORD, LOGOUT}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
       body: ListView.separated(
           itemCount: passwords.length,
           itemBuilder: (BuildContext context, int index) {
@@ -55,5 +75,18 @@ class ShowPasswords extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _handleMenuClick(BuildContext context, String value) {
+    switch (value) {
+      case LOGOUT:
+        break;
+      case CHANGE_MASTER_PASSWORD:
+        Navigator.pushNamed(
+          context,
+          ChangeMasterPasswordRoute,
+        );
+        break;
+    }
   }
 }

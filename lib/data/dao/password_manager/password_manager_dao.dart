@@ -9,4 +9,5 @@ abstract class PasswordManagerDao {
   Future<String> decryptPassword(String password);
   Future<void> deletePassword(int index);
   Future<void> updatePassword(PasswordModelWithIndex passwordModelWithIndex);
+  Future<bool> updateMasterPassword(String oldPassword, String newPassword);
 }
