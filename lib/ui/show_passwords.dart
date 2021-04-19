@@ -80,6 +80,8 @@ class ShowPasswords extends StatelessWidget {
   void _handleMenuClick(BuildContext context, String value) {
     switch (value) {
       case LOGOUT:
+        Navigator.pushNamedAndRemoveUntil(
+            context, EnterMasterPasswordRoute, (r) => false);
         break;
       case CHANGE_MASTER_PASSWORD:
         Navigator.pushNamed(
