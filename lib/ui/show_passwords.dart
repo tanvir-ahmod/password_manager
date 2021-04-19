@@ -45,25 +45,34 @@ class ShowPasswords extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.separated(
-          itemCount: passwords.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(passwords[index].title),
-              subtitle: Text(passwords[index].userName),
-              leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/lock_icon_2.png'),
-              ),
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                Navigator.pushNamed(context, ShowDetailsRoute,
-                    arguments: PasswordModelWithIndex(index, passwords[index]));
+      body: () {
+        if (passwords.isEmpty) {
+          return Center(
+            child: Text("No Data Found"),
+          );
+        } else
+          return ListView.separated(
+              itemCount: passwords.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(passwords[index].title),
+                  subtitle: Text(passwords[index].userName),
+                  leading: CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/images/lock_icon_2.png'),
+                  ),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.pushNamed(context, ShowDetailsRoute,
+                        arguments:
+                            PasswordModelWithIndex(index, passwords[index]));
+                  },
+                );
               },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return Divider();
-          }),
+              separatorBuilder: (context, index) {
+                return Divider();
+              });
+      }(),
       floatingActionButton: FloatingActionButton(
         // isExtended: true,
         child: Icon(Icons.add),
