@@ -83,7 +83,9 @@ class _ShowDetailsState extends State<ShowDetails> {
                     onTap: () {
                       setState(() {
                         _isEditable = false;
-                        _pass.text = _passwordModel.password;
+                        _pass.text = _isPasswordHidden
+                            ? _passwordModel.password
+                            : _decryptedPassword;
                       });
                     },
                     child: Icon(
@@ -99,7 +101,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                       onTap: () {
                         setState(() {
                           _isEditable = true;
-                          _pass.text = "";
+                          _pass.text = _decryptedPassword;
                         });
                       },
                       child: Icon(
