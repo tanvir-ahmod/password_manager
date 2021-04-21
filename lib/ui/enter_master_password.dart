@@ -38,73 +38,80 @@ class _EnterMasterPasswordState extends State<EnterMasterPassword> {
 
   Widget _enterPasswordUI(BuildContext context, Size size) {
     return Scaffold(
-      appBar: AppBar(title: Text("Enter master password")),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Image.asset(
-                "assets/images/password_setup.png",
-                height: size.height * 0.3,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 64.0),
+                child: Image.asset(
+                  "assets/images/lock_icon.png",
+                  height: size.height * 0.3,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-              child: Form(
-                key: _form,
-                child: TextFormField(
-                  controller: _pass,
-                  textInputAction: TextInputAction.next,
-                  obscureText: _isPasswordHidden,
-                  validator: (val) {
-                    if (val.isEmpty) return 'Field can not be empty';
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                    suffix: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isPasswordHidden = !_isPasswordHidden;
-                        });
-                      },
-                      child: Icon(
-                        _isPasswordHidden
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 32.0, right: 32.0),
+                child: Form(
+                  key: _form,
+                  child: TextFormField(
+                    controller: _pass,
+                    textInputAction: TextInputAction.next,
+                    obscureText: _isPasswordHidden,
+                    validator: (val) {
+                      if (val.isEmpty) return 'Field can not be empty';
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Enter master password",
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
+                      suffix: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isPasswordHidden = !_isPasswordHidden;
+                          });
+                        },
+                        child: Icon(
+                          _isPasswordHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              child: Text(
-                "Proceed",
-                style: TextStyle(fontSize: 16),
+              SizedBox(
+                height: 20,
               ),
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.lightBlue),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.lightBlue)))),
-              onPressed: () {
-                if (_form.currentState.validate()) {
-                  BlocProvider.of<EnterPasswordBloc>(context)
-                      .add(CheckPasswordEvent(_pass.text));
-                }
-              },
-            )
-          ],
+              ElevatedButton(
+                child: Text(
+                  "Proceed",
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blueAccent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.blueAccent)))),
+                onPressed: () {
+                  if (_form.currentState.validate()) {
+                    BlocProvider.of<EnterPasswordBloc>(context)
+                        .add(CheckPasswordEvent(_pass.text));
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
