@@ -18,13 +18,32 @@ class ShowPasswords extends StatefulWidget {
 
 class _ShowPasswordsState extends State<ShowPasswords> {
   var _isDraggable = false;
+  var _isSearching = false;
 
   List<PasswordModel> passwords = [];
+
+  final TextEditingController _filter = new TextEditingController();
+
+  String _searchText = "";
+  List<PasswordModel> filteredPasswords = [];
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
+
+    _filter.addListener(() {
+      if (_filter.text.isEmpty) {
+        setState(() {
+          _searchText = "";
+          filteredPasswords = passwords;
+        });
+      } else {
+        setState(() {
+          _searchText = _filter.text;
+        });
+      }
+    });
   }
 
   @override
@@ -34,6 +53,7 @@ class _ShowPasswordsState extends State<ShowPasswords> {
         if (state is GetPasswordState) {
           setState(() {
             passwords = state.passwords;
+            filteredPasswords = passwords;
           });
         }
         if (state is RearrangedState) {
@@ -62,16 +82,37 @@ class _ShowPasswordsState extends State<ShowPasswords> {
             child: Text("No Data Found"),
           );
         } else {
+          if (_searchText.isNotEmpty) {
+            List<PasswordModel> tempList = [];
+            for (int i = 0; i < passwords.length; i++) {
+              if (passwords[i]
+                      .title
+                      .toLowerCase()
+                      .contains(_searchText.toLowerCase()) ||
+                  passwords[i]
+                      .userName
+                      .contains(_searchText.toLowerCase())) {
+                tempList.add(passwords[i]);
+              }
+            }
+            filteredPasswords = tempList;
+
+            if (filteredPasswords.isEmpty)
+              return Center(
+                child: Text("No Data Found"),
+              );
+          }
+
           return ReorderableListView(
             buildDefaultDragHandles: _isDraggable,
             children: <Widget>[
-              for (int index = 0; index < passwords.length; index++)
+              for (int index = 0; index < filteredPasswords.length; index++)
                 Container(
                   key: Key('$index'),
                   color: index.isOdd ? oddItemColor : evenItemColor,
                   child: ListTile(
-                    title: Text(passwords[index].title),
-                    subtitle: Text(passwords[index].userName),
+                    title: Text(filteredPasswords[index].title),
+                    subtitle: Text(filteredPasswords[index].userName),
                     leading: CircleAvatar(
                       backgroundImage:
                           AssetImage('assets/images/lock_icon_2.png'),
@@ -83,8 +124,8 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                     }(),
                     onTap: () {
                       Navigator.pushNamed(context, ShowDetailsRoute,
-                          arguments:
-                              PasswordModelWithIndex(index, passwords[index]));
+                          arguments: PasswordModelWithIndex(
+                              index, filteredPasswords[index]));
                     },
                   ),
                 ),
@@ -116,7 +157,26 @@ class _ShowPasswordsState extends State<ShowPasswords> {
 
   Widget _showAppBar() {
     return AppBar(
-      title: Text("Show passwords"),
+      title: _isSearching
+          ? TextField(
+              controller: _filter,
+              decoration: new InputDecoration(
+                  prefixIcon: new Icon(Icons.search), hintText: 'Search...'))
+          : Text("Show passwords"),
+      leading: _isSearching
+          ? GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isSearching = false;
+                  _filter.clear();
+                });
+              },
+              child: Icon(
+                Icons.close,
+                size: 26.0, // add custom icons also
+              ),
+            )
+          : Container(),
       actions: <Widget>[
         () {
           if (_isDraggable)
@@ -152,11 +212,24 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                     )),
               ],
             );
-          else
+          else if (!_isSearching)
             return Row(
               children: [
                 Padding(
-                    padding: EdgeInsets.only(right: 20.0),
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isSearching = true;
+                        });
+                      },
+                      child: Icon(
+                        Icons.search,
+                        size: 26.0,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.only(right: 10.0),
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -184,6 +257,8 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                 ),
               ],
             );
+          else
+            return Container();
         }()
       ],
     );
