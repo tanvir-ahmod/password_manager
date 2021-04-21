@@ -129,11 +129,14 @@ class _ShowDetailsState extends State<ShowDetails> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 32.0),
               child: Image.asset(
-                "assets/images/password_setup.png",
+                "assets/images/lock_icon.png",
                 height: size.height * 0.3,
               ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
@@ -152,8 +155,11 @@ class _ShowDetailsState extends State<ShowDetails> {
                       },
                       onEditingComplete: () => node.nextFocus(),
                       decoration: InputDecoration(
-                        labelText: 'Title',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Title',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                       ),
                     ),
                     SizedBox(
@@ -165,8 +171,11 @@ class _ShowDetailsState extends State<ShowDetails> {
                       textInputAction: TextInputAction.next,
                       onEditingComplete: () => node.nextFocus(),
                       decoration: InputDecoration(
-                        labelText: 'Username / Email',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Username / Email',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                       ),
                     ),
                     SizedBox(
@@ -183,8 +192,11 @@ class _ShowDetailsState extends State<ShowDetails> {
                       },
                       onEditingComplete: () => node.unfocus(),
                       decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                         suffix: InkWell(
                           onTap: () {
                             if (!_isEditable) {
@@ -216,31 +228,36 @@ class _ShowDetailsState extends State<ShowDetails> {
             ),
             (() {
               if (_isEditable) {
-                return ElevatedButton(
-                  child: Text(
-                    "Update",
-                    style: TextStyle(fontSize: 16),
+                return ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(width: 100, height: 40),
+                  child: ElevatedButton(
+                    child: Text(
+                      "Update",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.blueAccent),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side:
+                                        BorderSide(color: Colors.blueAccent)))),
+                    onPressed: () async {
+                      if (_form.currentState.validate()) {
+                        BlocProvider.of<ShowDetailsBloc>(context).add(
+                            UpdateDetailsEvent(PasswordModelWithIndex(
+                                index,
+                                PasswordModel(
+                                    title: _title.text,
+                                    password: _pass.text,
+                                    userName: _userName.text))));
+                      }
+                    },
                   ),
-                  style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.lightBlue),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Colors.lightBlue)))),
-                  onPressed: () async {
-                    if (_form.currentState.validate()) {
-                      BlocProvider.of<ShowDetailsBloc>(context).add(
-                          UpdateDetailsEvent(PasswordModelWithIndex(
-                              index,
-                              PasswordModel(
-                                  title: _title.text,
-                                  password: _pass.text,
-                                  userName: _userName.text))));
-                    }
-                  },
                 );
               } else
                 return Container();
