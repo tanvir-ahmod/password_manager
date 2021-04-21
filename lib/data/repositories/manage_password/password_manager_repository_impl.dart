@@ -43,6 +43,10 @@ class PasswordManagerRepositoryImpl extends PasswordManagerRepository {
       _passwordManagerDao.updatePassword(passwordModelWithIndex);
 
   @override
-  Future<bool> updateMasterPassword(String oldPassword,String password) =>
+  Future<bool> updateMasterPassword(String oldPassword, String password) =>
       _passwordManagerDao.updateMasterPassword(oldPassword, password);
+
+  @override
+  Future<void> rearrangeList(List<PasswordModel> passwords) =>
+      _passwordManagerDao.rearrangeList(passwords);
 }

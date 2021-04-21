@@ -7,3 +7,7 @@ class GetPasswordState extends ShowPasswordState {
 
   GetPasswordState(this.passwords);
 }
+
+class LoadingState extends ShowPasswordState {}
+
+class RearrangedState extends ShowPasswordState {}

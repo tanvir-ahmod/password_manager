@@ -17,4 +17,6 @@ abstract class PasswordManagerRepository {
   Future<void> updatePassword(PasswordModelWithIndex passwordModelWithIndex);
 
   Future<bool> updateMasterPassword(String oldPassword, String newPassword);
+
+  Future<void> rearrangeList(List<PasswordModel> passwords);
 }

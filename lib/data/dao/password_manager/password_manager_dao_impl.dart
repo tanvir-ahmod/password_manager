@@ -79,4 +79,12 @@ class PasswordManagerDaoImpl extends PasswordManagerDao {
     }
     return await Future.value(false);
   }
+
+  @override
+  Future<void> rearrangeList(List<PasswordModel> passwords) async {
+    final passwordBox =
+        await Hive.openBox<PasswordModel>(Constants.PASSWORD_DB);
+    await passwordBox.clear();
+    await passwordBox.addAll(passwords);
+  }
 }

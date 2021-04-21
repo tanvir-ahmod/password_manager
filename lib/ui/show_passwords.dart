@@ -19,6 +19,8 @@ class ShowPasswords extends StatefulWidget {
 class _ShowPasswordsState extends State<ShowPasswords> {
   var _isDraggable = false;
 
+  List<PasswordModel> passwords = [];
+
   @override
   void initState() {
     super.initState();
@@ -27,17 +29,27 @@ class _ShowPasswordsState extends State<ShowPasswords> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowPasswordBloc, ShowPasswordState>(
-        builder: (context, state) {
-      if (state is GetPasswordState) {
-        return _showPasswords(context, state.passwords);
-      } else {
-        return _showPasswords(context, <PasswordModel>[]);
-      }
-    });
+    return BlocListener<ShowPasswordBloc, ShowPasswordState>(
+      listener: (context, state) {
+        if (state is GetPasswordState) {
+          setState(() {
+            passwords = state.passwords;
+          });
+        }
+        if (state is RearrangedState) {
+          _showSnackbar();
+        }
+        if (state is LoadingState) {
+          _showLoaderDialog();
+        } else {
+          Navigator.of(context, rootNavigator: true).pop('dialog');
+        }
+      },
+      child: _showPasswords(),
+    );
   }
 
-  Widget _showPasswords(BuildContext context, List<PasswordModel> passwords) {
+  Widget _showPasswords() {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final oddItemColor = colorScheme.primary.withOpacity(0.05);
     final evenItemColor = colorScheme.primary.withOpacity(0.15);
@@ -51,7 +63,7 @@ class _ShowPasswordsState extends State<ShowPasswords> {
           );
         } else {
           return ReorderableListView(
-            buildDefaultDragHandles: true,
+            buildDefaultDragHandles: _isDraggable,
             children: <Widget>[
               for (int index = 0; index < passwords.length; index++)
                 Container(
@@ -114,6 +126,8 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                     padding: EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                       onTap: () {
+                        BlocProvider.of<ShowPasswordBloc>(context)
+                            .add(RearrangeListEvent(passwords));
                         setState(() {
                           _isDraggable = false;
                         });
@@ -188,5 +202,38 @@ class _ShowPasswordsState extends State<ShowPasswords> {
         );
         break;
     }
+  }
+
+  void _showSnackbar() {
+    final snackBar = SnackBar(
+      content: Text('Order updated'),
+      action: SnackBarAction(
+        label: 'ok',
+        onPressed: () {},
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  _showLoaderDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(
+                width: 20,
+              ),
+              Container(
+                  margin: EdgeInsets.only(left: 7), child: Text("Loading...")),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

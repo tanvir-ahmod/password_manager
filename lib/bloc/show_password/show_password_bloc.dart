@@ -12,9 +12,15 @@ class ShowPasswordBloc extends Bloc<ShowPasswordEvent, ShowPasswordState> {
   @override
   Stream<ShowPasswordState> mapEventToState(ShowPasswordEvent event) async* {
     if (event is GetPasswordsEvent) {
+      yield LoadingState();
       List<PasswordModel> passwords =
           await _passwordManagerRepository.getPasswords();
       yield GetPasswordState(passwords);
+    }
+    if (event is RearrangeListEvent) {
+      yield LoadingState();
+      await _passwordManagerRepository.rearrangeList(event.passwords);
+      yield RearrangedState();
     }
   }
 }
