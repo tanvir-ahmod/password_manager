@@ -43,16 +43,20 @@ class _AddPasswordState extends State<AddPassword> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 32.0),
               child: Image.asset(
-                "assets/images/password_setup.png",
+                "assets/images/lock_icon.png",
                 height: size.height * 0.3,
               ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: Form(
                 key: _form,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   children: [
                     TextFormField(
@@ -64,8 +68,11 @@ class _AddPasswordState extends State<AddPassword> {
                       },
                       onEditingComplete: () => node.nextFocus(),
                       decoration: InputDecoration(
-                        labelText: 'Title',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Title',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                       ),
                     ),
                     SizedBox(
@@ -76,8 +83,11 @@ class _AddPasswordState extends State<AddPassword> {
                       textInputAction: TextInputAction.next,
                       onEditingComplete: () => node.nextFocus(),
                       decoration: InputDecoration(
-                        labelText: 'Username / Email (optional)',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Username / Email (optional)',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                       ),
                     ),
                     SizedBox(
@@ -93,8 +103,11 @@ class _AddPasswordState extends State<AddPassword> {
                       },
                       onEditingComplete: () => node.unfocus(),
                       decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                         suffix: InkWell(
                           onTap: () {
                             setState(() {
@@ -116,29 +129,32 @@ class _AddPasswordState extends State<AddPassword> {
             SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              child: Text(
-                "Save",
-                style: TextStyle(fontSize: 16),
+            ConstrainedBox(
+              constraints: BoxConstraints.tightFor(width: 100, height: 40),
+              child: ElevatedButton(
+                child: Text(
+                  "Save",
+                  style: TextStyle(fontSize: 18),
+                ),
+                style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blueAccent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.blueAccent)))),
+                onPressed: () async {
+                  if (_form.currentState.validate()) {
+                    BlocProvider.of<AddPasswordBloc>(context).add(
+                        InsertPasswordEvent(PasswordModel(
+                            title: _title.text,
+                            password: _pass.text,
+                            userName: _userName.text)));
+                  }
+                },
               ),
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.lightBlue),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.lightBlue)))),
-              onPressed: () async {
-                if (_form.currentState.validate()) {
-                  BlocProvider.of<AddPasswordBloc>(context).add(
-                      InsertPasswordEvent(PasswordModel(
-                          title: _title.text,
-                          password: _pass.text,
-                          userName: _userName.text)));
-                }
-              },
             )
           ],
         ),
