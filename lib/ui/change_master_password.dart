@@ -35,21 +35,25 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
 
   Widget _changeMasterPasswordUI() {
     var size = MediaQuery.of(context).size;
-    final node = FocusScope.of(context);
+    final focusNode1 = FocusNode();
+    final focusNode2 = FocusNode();
     return Scaffold(
       appBar: AppBar(title: Text("Change master password")),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 32.0),
               child: Image.asset(
-                "assets/images/password_setup.png",
+                "assets/images/lock_icon.png",
                 height: size.height * 0.3,
               ),
             ),
+            SizedBox(
+              height: 20,
+            ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0),
               child: Form(
                 key: _form,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -58,15 +62,18 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                     TextFormField(
                       controller: _oldPassword,
                       textInputAction: TextInputAction.next,
-                      obscureText: _isOldPasswordHidden,
                       validator: (val) {
                         if (val.isEmpty) return 'Field can not be empty';
                         return null;
                       },
-                      onEditingComplete: () => node.nextFocus(),
+                      onEditingComplete: () =>
+                          FocusScope.of(context).requestFocus(focusNode1),
                       decoration: InputDecoration(
-                        labelText: 'Current password',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Current password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                         suffix: InkWell(
                           onTap: () {
                             setState(() {
@@ -85,17 +92,22 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                       height: 20,
                     ),
                     TextFormField(
+                      focusNode: focusNode1,
                       controller: _newPassword,
                       textInputAction: TextInputAction.next,
-                      onEditingComplete: () => node.nextFocus(),
+                      onEditingComplete: () =>
+                          FocusScope.of(context).requestFocus(focusNode2),
                       obscureText: _isNewPasswordHidden,
                       validator: (val) {
                         if (val.isEmpty) return 'Field can not be empty';
                         return null;
                       },
                       decoration: InputDecoration(
-                        labelText: 'New Password',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'New Password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                         suffix: InkWell(
                           onTap: () {
                             setState(() {
@@ -114,6 +126,7 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                       height: 20,
                     ),
                     TextFormField(
+                      focusNode: focusNode2,
                       controller: _confirmPassword,
                       textInputAction: TextInputAction.done,
                       obscureText: _isConfirmPasswordHidden,
@@ -123,10 +136,12 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
                           return 'Password does not match';
                         return null;
                       },
-                      onEditingComplete: () => node.unfocus(),
                       decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        hintText: 'Confirm Password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(32.0)),
                         suffix: InkWell(
                           onTap: () {
                             setState(() {
@@ -149,27 +164,30 @@ class _ChangeMasterPasswordState extends State<ChangeMasterPassword> {
             SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              child: Text(
-                "Update",
-                style: TextStyle(fontSize: 16),
+            ConstrainedBox(
+              constraints: BoxConstraints.tightFor(width: 100, height: 40),
+              child: ElevatedButton(
+                child: Text(
+                  "Update",
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blueAccent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.blueAccent)))),
+                onPressed: () async {
+                  if (_form.currentState.validate()) {
+                    BlocProvider.of<ChangeMasterPasswordBloc>(context).add(
+                        UpdateMasterPasswordEvent(
+                            _oldPassword.text, _newPassword.text));
+                  }
+                },
               ),
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.lightBlue),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.lightBlue)))),
-              onPressed: () async {
-                if (_form.currentState.validate()) {
-                  BlocProvider.of<ChangeMasterPasswordBloc>(context).add(
-                      UpdateMasterPasswordEvent(
-                          _oldPassword.text, _newPassword.text));
-                }
-              },
             )
           ],
         ),
