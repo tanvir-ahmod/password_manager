@@ -11,7 +11,7 @@ import 'package:password_manager/bloc/show_password/show_password_bloc.dart';
 import 'package:password_manager/data/repositories/home/home_repository_impl.dart';
 import 'package:password_manager/data/repositories/manage_password/password_manager_repository_impl.dart';
 import 'package:password_manager/models/password_model.dart';
-import 'bloc/home/home_bloc.dart';
+import 'bloc/splash_screen/splash_screen_bloc.dart';
 import 'utils/app_router.dart';
 
 void main() async {
@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               ShowPasswordBloc(PasswordManagerRepositoryImpl()),
         ),
-        BlocProvider<HomeBloc>(
-          create: (context) => HomeBloc(HomeRepositoryImpl()),
+        BlocProvider<SplashScreenBloc>(
+          create: (context) => SplashScreenBloc(HomeRepositoryImpl()),
         ),
         BlocProvider<EnterPasswordBloc>(
           create: (context) =>
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: AppRouter.generateRoute,
-        initialRoute: HomeRoute,
+        initialRoute: SplashRoute,
       ),
     );
   }
