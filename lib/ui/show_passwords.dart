@@ -203,6 +203,7 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                       onTap: () {
                         setState(() {
                           _isDraggable = false;
+                          BlocProvider.of<ShowPasswordBloc>(context).add(GetPasswordsEvent());
                         });
                       },
                       child: Icon(
