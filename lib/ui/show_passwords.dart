@@ -176,7 +176,7 @@ class _ShowPasswordsState extends State<ShowPasswords> {
                 size: 26.0, // add custom icons also
               ),
             )
-          : Container(),
+          : null,
       actions: <Widget>[
         () {
           if (_isDraggable)
@@ -283,7 +283,7 @@ class _ShowPasswordsState extends State<ShowPasswords> {
     final snackBar = SnackBar(
       content: Text('Order updated'),
       action: SnackBarAction(
-        label: 'ok',
+        label: 'OK',
         onPressed: () {},
       ),
     );
