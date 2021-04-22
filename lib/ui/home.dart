@@ -13,7 +13,7 @@ class Home extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 64.0),
             child: Image.asset(
               "assets/images/lock_icon.png",
               height: size.height * 0.3,
@@ -55,11 +55,11 @@ class Home extends StatelessWidget {
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.lightBlue),
+                      MaterialStateProperty.all<Color>(Colors.blueAccent),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.lightBlue)))))
+                          side: BorderSide(color: Colors.blueAccent)))))
         ],
       ),
     ));
